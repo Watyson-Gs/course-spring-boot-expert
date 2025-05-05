@@ -1,21 +1,40 @@
 spring:
   application:
-    name: Curso - Spring boot expert
+    name: Curso - Spring Boot Expert
+
   datasource:
+    # Configurações do banco de dados H2
     driver-class-name: org.h2.Driver
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+
   jpa:
+    # Configuração do Hibernate (JPA)
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: update # Atualiza o schema automaticamente. Ideal apenas para desenvolvimento.
+    show-sql: true # Exibe as queries no console
     properties:
       hibernate.dialect: org.hibernate.dialect.H2Dialect
+
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: true # Ativa o console web do H2 (apenas em dev)
+      path: /h2-console # Caminho de acesso ao console
+
   messages:
-    encoding: UTF-8
-    basename: messages
+    encoding: UTF-8 # Codificação dos arquivos de mensagens
+    basename: messages # Nome base dos arquivos .properties
+
+  springdoc:
+    api-docs:
+      enable: ${API_DOC_ENABLED} # Ativa ou desativa a geração da OpenAPI (boolean)
+      path: /oper/v3/api-docs # Caminho da documentação gerada em JSON
+
+    swagger-ui:
+      enabled: ${API_UI_ENABLED} # Ativa ou desativa a UI do Swagger
+      path: /swagger # Caminho para acessar o Swagger UI
+      doc-expansion: none # Nenhuma seção expandida por padrão
+      filter: true # Habilita o campo de busca nos endpoints
+      operationsSorter: method # Ordena endpoints por função HTTP
+      tagsSorter: alpha # Ordena tags em ordem alfabética
