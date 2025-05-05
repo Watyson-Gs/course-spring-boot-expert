@@ -6,3 +6,6 @@
 
 # Diretórios e arquivos gerados pelo build
 /target/
+
+# Arquivos de configuração de ambientes (variáveis de ambiente)
+.env
