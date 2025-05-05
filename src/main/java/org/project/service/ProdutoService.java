@@ -1,5 +1,6 @@
 package org.project.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.domain.entity.Produto;
@@ -17,17 +18,17 @@ public class ProdutoService {
     private final ProdutoRepository repository;
     private final ProdutoMapper mapper;
 
-    public ProdutoResponse salvar(ProdutoSalvarRequest request) {
-        Produto produto = salvar(mapper.toEntity(request));
-        return mapper.toResponse(produto);
-    }
+    @Transactional
+    public ProdutoResponse salvar(final ProdutoSalvarRequest request) {
+        log.info("Iniciando o processo de criação de um novo produto.");
+        log.debug("Dados de requisição recebidos para salvar produto: {}", request);
 
-    private Produto salvar(Produto request) {
-        log.info("Iniciando processo de salvamento do produto: {}", request);
+        Produto produtoToSave = mapper.toEntity(request);
+        Produto savedProduto = repository.save(produtoToSave);
 
-        Produto salvo = repository.save(request);
+        log.info("Produto salvo com sucesso no banco de dados. ID gerado: {}", savedProduto.getId());
+        log.debug("Detalhes completos da entidade Produto salva: {}", savedProduto);
 
-        log.info("Produto salvo com sucesso: {}", salvo);
-        return salvo;
+        return mapper.toResponse(savedProduto);
     }
 }

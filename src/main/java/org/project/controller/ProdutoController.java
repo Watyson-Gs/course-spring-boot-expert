@@ -1,6 +1,7 @@
 package org.project.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.project.domain.request.ProdutoSalvarRequest;
@@ -15,22 +16,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("produto")
+@RequestMapping("produtos")
+@Tag(name = "Produto", description = "Gerenciamento de Produtos")
 public class ProdutoController {
 
     private final ProdutoService service;
 
     @Operation(
-            summary = "Cadastrar novo produto",
+            summary = "Criar Novo Produto",
             description = """
-                    Criação de um produto no sistema.
+                    Cria um novo registro de produto no sistema.
                     
-                    Campos obrigatórios:
-                    - nome: deve conter texto válido (não vazio ou apenas espaços);
-                    - descrição: deve conter texto válido (não vazio ou apenas espaços);
-                    - preço: deve ser um valor numérico positivo maior que zero.
+                    **Dados Obrigatórios (Request Body):**
+                    * `nome`: Nome do produto (texto, não pode ser vazio).
+                    * `descricao`: Descrição detalhada do produto (texto, não pode ser vazia).
+                    * `preco`: Preço unitário do produto (valor numérico positivo, maior que zero).
                     
-                    Retorna os dados do produto criado em caso de sucesso.
+                    **Resposta de Sucesso (HTTP 201 Created):**
+                    Retorna os detalhes completos do produto recém-criado, incluindo seu ID gerado.
                     """
     )
     @PostMapping

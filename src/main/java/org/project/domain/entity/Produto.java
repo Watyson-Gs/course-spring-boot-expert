@@ -1,36 +1,36 @@
 package org.project.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 @Entity
 @Table(name = "produto")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Produto {
     @Id
-    @Column(nullable = false, updatable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Integer id;
 
     @Column(nullable = false)
-    @NotBlank(message = "{campo.obrigatorio}")
+    @NotBlank(message = "{validacao.campo.obrigatorio}")
     private String nome;
 
     @Column(nullable = false)
-    @NotBlank(message = "{campo.obrigatorio}")
+    @NotBlank(message = "{validacao.campo.obrigatorio}")
     private String descricao;
 
     @Column(nullable = false, precision = 16, scale = 4)
-    @NotNull(message = "{campo.obrigatorio}")
-    @Positive(message = "{campo.positivo}")
+    @NotNull(message = "{validacao.campo.obrigatorio}")
+    @Positive(message = "{validacao.campo.positivo}")
     private BigDecimal preco;
 }
