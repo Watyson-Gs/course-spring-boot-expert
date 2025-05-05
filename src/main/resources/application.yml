@@ -1,40 +1,21 @@
 spring:
   application:
-    name: Curso - Spring Boot Expert
+    name: Curso - Spring Boot Expert # Nome da aplicação
 
-  datasource:
-    # Configurações do banco de dados H2
-    driver-class-name: org.h2.Driver
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
-
-  jpa:
-    # Configuração do Hibernate (JPA)
-    hibernate:
-      ddl-auto: update # Atualiza o schema automaticamente. Ideal apenas para desenvolvimento.
-    show-sql: true # Exibe as queries no console
-    properties:
-      hibernate.dialect: org.hibernate.dialect.H2Dialect
-
-  h2:
-    console:
-      enabled: true # Ativa o console web do H2 (apenas em dev)
-      path: /h2-console # Caminho de acesso ao console
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev} # Define 'dev' como o perfil ativo por padrão
 
   messages:
-    encoding: UTF-8 # Codificação dos arquivos de mensagens
+    encoding: UTF-8 # Codificação das mensagens
     basename: messages # Nome base dos arquivos .properties
 
+  # Configurações Springdoc (OpenAPI/Swagger UI)
   springdoc:
-    api-docs:
-      enable: ${API_DOC_ENABLED} # Ativa ou desativa a geração da OpenAPI (boolean)
-      path: /oper/v3/api-docs # Caminho da documentação gerada em JSON
-
     swagger-ui:
-      enabled: ${API_UI_ENABLED} # Ativa ou desativa a UI do Swagger
-      path: /swagger # Caminho para acessar o Swagger UI
-      doc-expansion: none # Nenhuma seção expandida por padrão
-      filter: true # Habilita o campo de busca nos endpoints
-      operationsSorter: method # Ordena endpoints por função HTTP
-      tagsSorter: alpha # Ordena tags em ordem alfabética
+      path: /swagger # Caminho Swagger UI
+      docExpansion: none # Expansão padrão UI
+      filter: true # Habilitar filtro UI
+      operationsSorter: method # Ordenar operações UI
+      tagsSorter: alpha # Ordenar tags UI
+    api-docs:
+      path: /v3/api-docs # Caminho especificação OpenAPI JSON/YAML
