@@ -2,6 +2,7 @@ package org.project.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.project.handler.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -105,5 +106,23 @@ public class GlobalExceptionHandler {
         log.error("Erro inesperado ocorreu: ", ex);
         String message = "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
+    }
+
+    /**
+     * Handler para ResourceNotFoundException.
+     * Captura a exceção ResourceNotFoundException lançada pela camada de serviço
+     * quando um recurso buscado por ID não é encontrado no banco de dados.
+     * Mapeia esta exceção para a situação HTTP 404 NOT FOUND.
+     * <p>
+     * SUMÁRIO: Trata erros de recurso não encontrado (404 NOT FOUND).
+     *
+     * @param ex      A exceção ResourceNotFoundException capturada, contendo a mensagem do erro.
+     * @param request O contexto da requisição web.
+     * @return ResponseEntity contendo a mensagem da exceção e a situação 404 NOT FOUND.
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
+        log.warn("Requisição [{}]: Recurso não encontrado. Detalhes: {}", request.getDescription(false), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }
