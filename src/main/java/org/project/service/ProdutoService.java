@@ -1,14 +1,20 @@
 package org.project.service;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.project.domain.entity.Produto;
 import org.project.domain.request.ProdutoAtualizarRequest;
+import org.project.domain.request.ProdutoBuscarRequest;
 import org.project.domain.request.ProdutoSalvarRequest;
 import org.project.domain.response.ProdutoResponse;
 import org.project.handler.exception.ResourceNotFoundException;
 import org.project.mapper.ProdutoMapper;
 import org.project.repository.ProdutoRepository;
+import org.project.repository.specification.ProdutoSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +45,7 @@ public class ProdutoService {
      * @see ProdutoResponse
      */
     @Transactional
-    public ProdutoResponse criar(final ProdutoSalvarRequest request) {
+    public ProdutoResponse criar(@NonNull final ProdutoSalvarRequest request) {
         log.info("Iniciando o processo de criação de um novo produto.");
         log.debug("Dados de requisição recebidos para salvar produto: {}", request);
 
@@ -64,7 +70,7 @@ public class ProdutoService {
      * @return Optional contendo a entidade Produto, ou Optional.empty() se não encontrada.
      */
     @Transactional(readOnly = true)
-    private Optional<Produto> buscarPorId(Integer id) {
+    private Optional<Produto> buscarPorId(@NonNull final Integer id) {
         log.debug("Iniciando busca no repositório por ID: {}", id);
         Optional<Produto> result = repository.findById(id);
         log.debug("Fim da busca no repositório por ID {}. Resultado presente: {}", id, result.isPresent());
@@ -83,7 +89,7 @@ public class ProdutoService {
      * @return A entidade Produto encontrada (nunca null se não lançar exceção).
      * @throws ResourceNotFoundException se nenhum produto for encontrado com o ID especificado.
      */
-    private Produto obterPorId(Integer id) {
+    private Produto obterPorId(final Integer id) {
         return buscarPorId(id).orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + id));
     }
 
@@ -99,8 +105,36 @@ public class ProdutoService {
      * @return DTO de resposta com os dados do produto encontrado.
      * @throws ResourceNotFoundException se nenhum produto for encontrado com o ID especificado.
      */
-    public ProdutoResponse obterResponsePorId(Integer id) {
+    public ProdutoResponse obterResponsePorId(final Integer id) {
         return mapper.toResponse(obterPorId(id));
+    }
+
+    /**
+     * Busca produtos com base nos critérios fornecidos no DTO de busca, com suporte a paginação e ordenação.
+     * Utiliza Spring Data JPA Specifications para construir a consulta dinamicamente.
+     * Retorna uma página de DTOs de resposta.
+     * <p>
+     * SUMÁRIO: Busca produtos (DTOs) por critérios de filtro, com paginação e ordenação.
+     *
+     * @param request DTO contendo os critérios de busca (nome, descricao, minPreco, maxPreco).
+     * Pode ser nulo se nenhum critério de busca for fornecido.
+     * @param pageable Objeto Pageable contendo informações de paginação e ordenação. Não deve ser nulo.
+     * @return Uma página de DTOs {@link ProdutoResponse} contendo os produtos que correspondem aos critérios.
+     * Retorna uma página vazia se nenhum produto for encontrado.
+     */
+    @Transactional(readOnly = true)
+    public Page<ProdutoResponse> buscar(final ProdutoBuscarRequest request, @NonNull final Pageable pageable) {
+        log.info("Iniciando busca paginada de produtos");
+        log.debug("Critérios de busca recebidos: {}", request);
+        log.debug("Informações de paginação e ordenação: {}", pageable);
+
+        Specification<Produto> spec = ProdutoSpecification.bySearchCriteria(request);
+        Page<Produto> produtosPage = repository.findAll(spec, pageable);
+
+        log.info("Busca paginada de produtos finalizada. Página {} de {}, Total de elementos: {}",
+                produtosPage.getNumber() + 1, produtosPage.getTotalPages(), produtosPage.getTotalElements());
+
+        return produtosPage.map(mapper::toResponse);
     }
 
     /**
@@ -117,7 +151,7 @@ public class ProdutoService {
      * @throws ResourceNotFoundException se nenhum produto for encontrado com o ID especificado.
      */
     @Transactional
-    public ProdutoResponse atualizar(final Integer id, final ProdutoAtualizarRequest request) {
+    private Produto atualizar(@NonNull final Integer id, @NonNull final ProdutoAtualizarRequest request) {
         log.info("Iniciando o processo de atualização do produto com ID: {}", id);
         log.debug("Dados de requisição recebidos para atualizar produto com ID {}: {}", id, request);
 
@@ -131,7 +165,24 @@ public class ProdutoService {
         log.info("Produto com ID {} atualizado com sucesso.", updatedProduto.getId());
         log.debug("Detalhes completos da entidade Produto atualizada: {}", updatedProduto);
 
-        return mapper.toResponse(updatedProduto);
+        return updatedProduto;
+    }
+
+    /**
+     * Atualiza os dados de um produto existente e retorna um DTO de resposta.
+     * Utiliza a função {@code atualizar} para realizar a lógica de atualização
+     * e então mapeia a entidade atualizada para um DTO de resposta.
+     * Esta é a função para a camada de apresentação/API realizar atualizações.
+     * <p>
+     * SUMÁRIO: Atualiza um produto existente por ID (uso público, retorna DTO).
+     *
+     * @param id O ID do produto a ser atualizado.
+     * @param request DTO contendo os dados para atualização. Apenas campos não nulos serão considerados.
+     * @return DTO de resposta com os dados do produto atualizado.
+     * @throws ResourceNotFoundException se nenhum produto for encontrado com o ID especificado.
+     */
+    public ProdutoResponse atualizarResponse(final Integer id, final ProdutoAtualizarRequest request) {
+        return mapper.toResponse(atualizar(id, request));
     }
 
     /**
@@ -146,7 +197,7 @@ public class ProdutoService {
      * @throws ResourceNotFoundException se nenhum produto for encontrado com o ID especificado.
      */
     @Transactional
-    public void deletar(Integer id) {
+    public void deletar(@NonNull final Integer id) {
         log.info("Iniciando exclusão do produto com ID: {}", id);
 
         Produto produto = obterPorId(id);

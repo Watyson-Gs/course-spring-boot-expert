@@ -1,13 +1,20 @@
 package org.project.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.project.domain.request.ProdutoAtualizarRequest;
+import org.project.domain.request.ProdutoBuscarRequest;
 import org.project.domain.request.ProdutoSalvarRequest;
 import org.project.domain.response.ProdutoResponse;
 import org.project.service.ProdutoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +69,40 @@ public class ProdutoController {
     }
 
     @Operation(
+            summary = "Buscar Produtos por Critérios (Paginado e Ordenável)",
+            description = """
+                    Busca produtos com base em critérios de filtro opcionais, com suporte a paginação e ordenação.
+                    
+                    **Parâmetros de Busca (Query Parameters):**
+                    * `nome`: Filtra por nome do produto (busca parcial, case-insensitive).
+                    * `descricao`: Filtra por descrição do produto (busca parcial, case-insensitive).
+                    * `minPreco`: Filtra por preço mínimo (inclusive).
+                    * `maxPreco`: Filtra por preço máximo (inclusive).
+                    
+                    **Parâmetros de Paginação e Ordenação (Query Parameters - Padrão Spring Data):**
+                    * `page`: Número da página (baseado em zero, padrão é 0).
+                    * `size`: Número de resultados por página (padrão é 10).
+                    * `sort`: Propriedade pela qual ordenar, seguida por ',asc' ou ',desc' (ex: `sort=nome,asc`). Pode ser repetido para múltiplas propriedades.
+                    
+                    Você pode combinar critérios de busca com parâmetros de paginação/ordenação.
+                    Se nenhum parâmetro de busca for fornecido, a busca retornará todos os produtos paginados/ordenados.
+                    
+                    **Resposta de Sucesso (HTTP 200 OK):**
+                    Retorna um objeto Page contendo a lista de DTOs de resposta para a página solicitada,
+                    juntamente com metadados de paginação (total de elementos, total de páginas, etc.).
+                    A lista de conteúdo pode estar vazia se nenhum produto for encontrado na página.
+                    """
+    )
+    @GetMapping
+    public ResponseEntity<Page<ProdutoResponse>> buscar(
+            @ModelAttribute @Valid ProdutoBuscarRequest request,
+            @PageableDefault(sort = "id") Pageable pageable
+    ) {
+        Page<ProdutoResponse> responseList = service.buscar(request, pageable);
+        return ResponseEntity.ok(responseList);
+    }
+
+    @Operation(
             summary = "Atualizar Produto por ID",
             description = """
                     Atualiza os dados de um produto existente utilizando seu ID.
@@ -89,7 +130,7 @@ public class ProdutoController {
     public ResponseEntity<ProdutoResponse> atualizar(
             @PathVariable Integer id, @RequestBody @Valid ProdutoAtualizarRequest request
     ) {
-        ProdutoResponse response = service.atualizar(id, request);
+        ProdutoResponse response = service.atualizarResponse(id, request);
         return ResponseEntity.ok(response);
     }
 
