@@ -227,5 +227,5 @@ Sinta-se à vontade para fazer fork e adaptá-lo aos seus estudos.
 
 ## 📄 Licença
 
-Distribuído sob a **Licença MIT**.
-Consulte o arquivo `LICENSE` para mais detalhes.
+Este projeto está licenciado sob a GNU General Public License (GPL).
+Você pode redistribuir e/ou modificar sob os termos da GPL, conforme publicada pela Free Software Foundation.
