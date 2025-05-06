@@ -9,7 +9,7 @@ import org.project.domain.request.ProdutoBuscarRequest;
 import org.project.domain.request.ProdutoSalvarRequest;
 import org.project.domain.response.ProdutoResponse;
 import org.project.handler.exception.ResourceNotFoundException;
-import org.project.mapper.ProdutoMapper;
+import org.project.domain.mapper.ProdutoMapper;
 import org.project.repository.ProdutoRepository;
 import org.project.repository.specification.ProdutoSpecification;
 import org.springframework.data.domain.Page;

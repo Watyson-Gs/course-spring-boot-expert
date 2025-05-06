@@ -1,4 +1,4 @@
-package org.project.mapper;
+package org.project.domain.mapper;
 
 import org.mapstruct.*;
 import org.project.domain.entity.Produto;
