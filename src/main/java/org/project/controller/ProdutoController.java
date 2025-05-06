@@ -9,10 +9,7 @@ import org.project.domain.response.ProdutoResponse;
 import org.project.service.ProdutoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
@@ -40,5 +37,26 @@ public class ProdutoController {
     public ResponseEntity<ProdutoResponse> salvar(@RequestBody @Valid ProdutoSalvarRequest request) {
         ProdutoResponse response = service.salvar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(
+            summary = "Obter Produto por ID",
+            description = """
+                    Busca e retorna os detalhes de um produto específico utilizando seu ID.
+
+                    **Parâmetros (Path Variable):**
+                    * `{id}`: O ID do produto a ser buscado (valor inteiro).
+
+                    **Resposta de Sucesso (HTTP 200 OK):**
+                    Retorna os dados completos do produto encontrado.
+
+                    **Resposta de Erro (HTTP 404 Not Found):**
+                    Retorna uma mensagem indicando que o produto com o ID fornecido não foi encontrado.
+                    """
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<ProdutoResponse> obterResponsePorId(@PathVariable Integer id) {
+        ProdutoResponse response = service.obterResponsePorId(id);
+        return ResponseEntity.ok(response);
     }
 }
