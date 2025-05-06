@@ -1,11 +1,22 @@
-# Arquivos de configuração do IntelliJ IDEA
+# ======================================
+# IDEs e Ferramentas
+# ======================================
+
+# IntelliJ IDEA
 .idea/
 
-# Arquivos de dependências do Maven
+# ======================================
+# Maven
+# ======================================
 /.mvn/
-
-# Diretórios e arquivos gerados pelo build
 /target/
 
-# Arquivos de configuração de ambientes (variáveis de ambiente)
+# ======================================
+# Ambientes e variáveis sensíveis
+# ======================================
 .env
+
+# ======================================
+# Logs, dumps e relatórios
+# ======================================
+*.log
