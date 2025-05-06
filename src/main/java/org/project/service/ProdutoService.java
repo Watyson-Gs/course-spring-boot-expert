@@ -38,7 +38,7 @@ public class ProdutoService {
      * @see ProdutoResponse
      */
     @Transactional
-    public ProdutoResponse salvar(final ProdutoSalvarRequest request) {
+    public ProdutoResponse criar(final ProdutoSalvarRequest request) {
         log.info("Iniciando o processo de criação de um novo produto.");
         log.debug("Dados de requisição recebidos para salvar produto: {}", request);
 
@@ -83,8 +83,7 @@ public class ProdutoService {
      * @throws ResourceNotFoundException se nenhum produto for encontrado com o ID especificado.
      */
     private Produto obterPorId(Integer id) {
-        Optional<Produto> result = buscarPorId(id);
-        return result.orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + id));
+        return buscarPorId(id).orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado com ID: " + id));
     }
 
     /**
@@ -102,4 +101,26 @@ public class ProdutoService {
     public ProdutoResponse obterResponsePorId(Integer id) {
         return mapper.toResponse(obterPorId(id));
     }
+
+    /**
+     * Deleta um produto pelo seu ID.
+     * Primeiro verifica se o produto existe usando {@code obterPorId}.
+     * Se o produto não for encontrado, {@code obterPorId} lançará {@code ResourceNotFoundException}.
+     * Se o produto for encontrado, ele é deletado do repositório.
+     * <p>
+     * SUMÁRIO: Deleta um produto por ID, verificando sua existência primeiro.
+     *
+     * @param id O ID do produto a ser deletado.
+     * @throws ResourceNotFoundException se nenhum produto for encontrado com o ID especificado.
+     */
+    @Transactional
+    public void deletar(Integer id) {
+        log.info("Iniciando exclusão do produto com ID: {}", id);
+
+        Produto produto = obterPorId(id);
+        repository.deleteById(produto.getId());
+
+        log.info("Produto com ID {} excluído com sucesso.", produto.getId());
+    }
+
 }

@@ -35,7 +35,7 @@ public class ProdutoController {
     )
     @PostMapping
     public ResponseEntity<ProdutoResponse> salvar(@RequestBody @Valid ProdutoSalvarRequest request) {
-        ProdutoResponse response = service.salvar(request);
+        ProdutoResponse response = service.criar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -43,20 +43,41 @@ public class ProdutoController {
             summary = "Obter Produto por ID",
             description = """
                     Busca e retorna os detalhes de um produto específico utilizando seu ID.
-
+                    
                     **Parâmetros (Path Variable):**
                     * `{id}`: O ID do produto a ser buscado (valor inteiro).
-
+                    
                     **Resposta de Sucesso (HTTP 200 OK):**
                     Retorna os dados completos do produto encontrado.
-
+                    
                     **Resposta de Erro (HTTP 404 Not Found):**
                     Retorna uma mensagem indicando que o produto com o ID fornecido não foi encontrado.
                     """
     )
     @GetMapping("/{id}")
-    public ResponseEntity<ProdutoResponse> obterResponsePorId(@PathVariable Integer id) {
+    public ResponseEntity<ProdutoResponse> obterPorId(@PathVariable Integer id) {
         ProdutoResponse response = service.obterResponsePorId(id);
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Deletar Produto por ID",
+            description = """
+                    Deleta um produto específico do sistema utilizando seu ID.
+                    
+                    **Parâmetros (Path Variable):**
+                    * `{id}`: O ID do produto a ser deletado (valor inteiro).
+                    
+                    **Resposta de Sucesso (HTTP 204 No Content):**
+                    Indica que o produto foi deletado com sucesso. Não há corpo na resposta.
+                    
+                    **Resposta de Erro (HTTP 404 Not Found):**
+                    Retorna uma mensagem indicando que o produto com o ID fornecido não foi encontrado.
+                    """
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }
