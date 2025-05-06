@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %highlight(%-5level) [%thread] %cyan(%logger{30}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="${ROOT_LOG_LEVEL:-INFO}">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+    <logger name="org.project" level="${PROJECT_LOG_LEVEL:-INFO}" additivity="false">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <logger name="org.springframework.web" level="${SPRING_WEB_LOG_LEVEL:-INFO}" additivity="false">
+        <appender-ref ref="CONSOLE" />
+    </logger>
+</configuration>
