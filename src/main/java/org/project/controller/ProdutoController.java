@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.project.domain.request.ProdutoAtualizarRequest;
 import org.project.domain.request.ProdutoSalvarRequest;
 import org.project.domain.response.ProdutoResponse;
 import org.project.service.ProdutoService;
@@ -57,6 +58,38 @@ public class ProdutoController {
     @GetMapping("/{id}")
     public ResponseEntity<ProdutoResponse> obterPorId(@PathVariable Integer id) {
         ProdutoResponse response = service.obterResponsePorId(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Atualizar Produto por ID",
+            description = """
+                    Atualiza os dados de um produto existente utilizando seu ID.
+                    Permite atualização parcial: apenas os campos fornecidos no corpo da requisição serão atualizados.
+                    
+                    **Parâmetros (Path Variable):**
+                    * `{id}`: O ID do produto a ser atualizado (valor inteiro).
+                    
+                    **Dados Opcionais (Request Body):**
+                    * `nome`: Novo nome do produto (texto).
+                    * `descricao`: Nova descrição do produto (texto).
+                    * `preco`: Novo preço unitário do produto (valor numérico positivo).
+                    
+                    **Resposta de Sucesso (HTTP 200 OK):**
+                    Retorna os dados completos do produto atualizado.
+                    
+                    **Resposta de Erro (HTTP 400 Bad Request):**
+                    Retorna erros de validação se os dados fornecidos forem inválidos (ex: preço negativo).
+                    
+                    **Resposta de Erro (HTTP 404 Not Found):**
+                    Retorna uma mensagem indicando que o produto com o ID fornecido não foi encontrado.
+                    """
+    )
+    @PatchMapping("/{id}")
+    public ResponseEntity<ProdutoResponse> atualizar(
+            @PathVariable Integer id, @RequestBody @Valid ProdutoAtualizarRequest request
+    ) {
+        ProdutoResponse response = service.atualizar(id, request);
         return ResponseEntity.ok(response);
     }
 

@@ -3,6 +3,7 @@ package org.project.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.project.domain.entity.Produto;
+import org.project.domain.request.ProdutoAtualizarRequest;
 import org.project.domain.request.ProdutoSalvarRequest;
 import org.project.domain.response.ProdutoResponse;
 import org.project.handler.exception.ResourceNotFoundException;
@@ -103,6 +104,37 @@ public class ProdutoService {
     }
 
     /**
+     * Atualiza os dados de um produto existente.
+     * Busca o produto pelo ID. Se encontrado, atualiza seus campos com base nos dados
+     * fornecidos no DTO de requisição (apenas campos não nulos). Salva as alterações
+     * e retorna o produto atualizado como DTO de resposta.
+     * <p>
+     * SUMÁRIO: Atualiza um produto existente por ID.
+     *
+     * @param id O ID do produto a ser atualizado.
+     * @param request DTO contendo os dados para atualização. Apenas campos não nulos serão considerados.
+     * @return DTO de resposta com os dados do produto atualizado.
+     * @throws ResourceNotFoundException se nenhum produto for encontrado com o ID especificado.
+     */
+    @Transactional
+    public ProdutoResponse atualizar(final Integer id, final ProdutoAtualizarRequest request) {
+        log.info("Iniciando o processo de atualização do produto com ID: {}", id);
+        log.debug("Dados de requisição recebidos para atualizar produto com ID {}: {}", id, request);
+
+        Produto produtoToUpdate = obterPorId(id);
+
+        log.debug("Produto existente encontrado para atualização: {}", produtoToUpdate);
+
+        mapper.toRequest(request, produtoToUpdate);
+        Produto updatedProduto = repository.save(produtoToUpdate);
+
+        log.info("Produto com ID {} atualizado com sucesso.", updatedProduto.getId());
+        log.debug("Detalhes completos da entidade Produto atualizada: {}", updatedProduto);
+
+        return mapper.toResponse(updatedProduto);
+    }
+
+    /**
      * Deleta um produto pelo seu ID.
      * Primeiro verifica se o produto existe usando {@code obterPorId}.
      * Se o produto não for encontrado, {@code obterPorId} lançará {@code ResourceNotFoundException}.
@@ -122,5 +154,4 @@ public class ProdutoService {
 
         log.info("Produto com ID {} excluído com sucesso.", produto.getId());
     }
-
 }
