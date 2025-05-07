@@ -153,7 +153,7 @@ A aplicação estará disponível em `http://localhost:8080`.
 ## 📚 Endpoints da API e Documentação
 
 Acesse a documentação interativa:
-👉 [`http://localhost:8080/swagger`](http://localhost:8080/swagger)
+👉 [`http://localhost:8080/swagger-ui.html`](http://localhost:8080/swagger-ui.html)
 
 ### Principais Endpoints
 

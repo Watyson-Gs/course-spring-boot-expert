@@ -35,7 +35,7 @@ spring:
       enable: ${API_DOC_ENABLED} # Ativar geração OpenAPI
 
     swagger-ui:
-      path: /swagger # Caminho Swagger UI
+      path: /swagger-ui.html # Caminho Swagger UI
       enabled: ${API_UI_ENABLED} # Ativar Swagger UI
       docExpansion: none # Expansão padrão UI
       filter: true # Habilitar filtro UI
