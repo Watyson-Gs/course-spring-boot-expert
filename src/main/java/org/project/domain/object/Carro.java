@@ -1,6 +1,7 @@
 package org.project.domain.object;
 
 import lombok.*;
+import org.project.domain.enums.CarroStatus;
 import org.project.domain.enums.ModeloCarro;
 import org.project.domain.enums.Montadora;
 
@@ -17,5 +18,13 @@ public class Carro {
 
     public Carro(Motor motor) {
         this.motor = motor;
+    }
+
+    public CarroStatus ignicao(Chave chave) {
+        if(chave.getMontadora() != montadora) {
+            return CarroStatus.FALHA_AO_LIGAR;
+        }
+
+        return CarroStatus.LIGADO;
     }
 }
